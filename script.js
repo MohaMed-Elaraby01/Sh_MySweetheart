@@ -4,7 +4,13 @@ const myCustomPlaylist = [
     { title: "إنتِ وأنا والحب سوا", src: "songs/musicBox/إنتِ وأنا والحب سوا.mp3", cover: "enty.png" },
     { title: "Yanna Yanna", src: "songs/musicBox/Yanna Yanna.mp3", cover: "yanna.png" },
     { title: "بعشق روحك والكلمات", src: "songs/musicBox/بعشق روحك والكلمات.mp3", cover: "nbdy.png" },
-    { title: "أحلى رسمة", src: "songs/musicBox/أحلى رسمة.mp3", cover: "wana.png" }
+    { title: "حبك بحر ماله حدود", src: "songs/musicBox/حبك بحر ماله حدود.mp3", cover: "hbkbhr.png" },
+    { title: "أحلى رسمة", src: "songs/musicBox/أحلى رسمة.mp3", cover: "wana.png" },
+    { title: "نسيني وانا جمبك كل الدنيا", src: "songs/musicBox/نسيني وانا جمبك كل الدنيا.mp3", cover: "nasyny.png" },
+    { title: "أغار عليها", src: "songs/musicBox/أغار عليها.mp3", cover: "agar.png" },
+    { title: "معقول", src: "songs/musicBox/معقول.mp3", cover: "Maaqul.png" },
+    { title: "عيد الحب", src: "songs/musicBox/عيد الحب.mp3", cover: "edhb.png" },
+    { title: "ماريدك(امزح🙂)", src: "songs/musicBox/ماريدك.mp3", cover: "maridk.png" }
 ];
 
 let currentTrackIndex = -1;
@@ -44,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // حساب العداد للأيام أسفل الصفحة
-    // تم ضبط التاريخ ليكون في الماضي لضمان ظهور العداد بشكل صحيح (مثال: 15 مايو 2024)
     const firstMeetDate = new Date(2025, 4, 15); 
     const today = new Date();
     const differenceInTime = today.getTime() - firstMeetDate.getTime();
@@ -101,11 +106,9 @@ function loadTrack(index) {
     audioPlayer.src = myCustomPlaylist[index].src;
     wTrackTitle.innerText = myCustomPlaylist[index].title;
     
-    // تغيير الصورة حسب الصورة المخصصة للأغنية في المصفوفة، وإذا لم توجد نضع الصورة الافتراضية
     wTrackArt.src = myCustomPlaylist[index].cover || "music.png";
     
     progressBar.value = 0;
-    // إعادة ضبط تأثير الديل الخلفي عند تحميل الأغنية
     progressBar.style.setProperty('--progress-tail', '0%');
 
     audioPlayer.play().then(() => {
@@ -174,7 +177,6 @@ function updateProgress() {
         const progressPercentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
         progressBar.value = progressPercentage;
         
-        // تمرير نسبة التقدم للـ CSS عشان نعمل تأثير الديل المتفاعل
         progressBar.style.setProperty('--progress-tail', `${progressPercentage}%`);
 
         let curMins = Math.floor(audioPlayer.currentTime / 60);
@@ -235,6 +237,7 @@ function openModal(folderType) {
         content = `
             <h2>قمرتييييي 📸✨</h2>
             <div class="gallery">
+                <img src="images/we.png" alt="صورتنا سوا">
                 <img src="images/photo1.jpg" alt="صورة 1">
                 <img src="images/photo2.jpg" alt="صورة 2">
                 <img src="images/photo3.jpg" alt="صورة 3">
@@ -261,6 +264,11 @@ function openModal(folderType) {
             <div style="line-height: 2; font-size: 1.15rem; color: #4f4f4f; text-align: justify;">
                 <p>🌸 فاكرة لما قلتلك <strong>"باي يحلوة"</strong>؟ الجملة دي كانت بداية إني أعرف أجمل وأرق واحدة شفتها في حياتي كلها.</p>
                 <p>شايفة العداد اللي تحت ده؟ إن شاء الله لو ربنا كاتب لنا نصيب، هاجي يوم <strong>"3285"</strong> وأطلب إيدك رسمي.. ولحد ما يجي الوقت ده، كل يوم هقعد أدعي من كل قلبي إنك تكوني من نصيبي وتفضلي منورة دنيتي دايماً 🌼</p>
+                
+                <!-- 📸 تم نقل حاوية الصورة لتصبح أسفل الكلام مباشرة -->
+                <div class="gallery" style="margin-top: 20px;">
+                    <img src="images/moh.png" alt="صورة خاصة">
+                </div>
             </div>
         `;
     }
@@ -352,4 +360,3 @@ window.onclick = function(event) {
     const modal = document.getElementById('folderModal');
     if (event.target == modal) { closeModal(); }
 }
-
