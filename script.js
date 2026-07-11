@@ -235,8 +235,9 @@ function openModal(folderType) {
     } 
     else if (folderType === 'her-photos') {
         content = `
-            <h2>قمرتييييي 📸✨</h2>
+            <h2>أنا و أنتِ 🤭❤️</h2>
             <div class="gallery">
+                <!-- الصور القديمة في البداية -->
                 <img src="images/we.png" alt="صورتنا سوا">
                 <img src="images/photo1.jpg" alt="صورة 1">
                 <img src="images/photo2.jpg" alt="صورة 2">
@@ -245,6 +246,18 @@ function openModal(folderType) {
                 <img src="images/photo5.jpg" alt="صورة 5">
                 <img src="images/photo6.jpg" alt="صورة 6">
                 <img src="images/photo7.jpg" alt="صورة 7">
+
+                <!-- الصور الجديدة في الأسفل بناءً على طلبك -->
+                <img src="images/us (2).png" alt="صورة جديدة 2">
+                
+                <!-- حاوية الصورة الثالثة التفاعلية مع عبارة توضيحية وانميشن ناعم للتبديل -->
+                <div class="special-image-container" onclick="toggleSpecialImage(this)">
+                    <div class="image-wrapper">
+                        <img src="images/us3.png" data-alt-src="images/us32.png" alt="صورة us3" class="smooth-toggle-img">
+                        <div class="click-hint">اضغطي على الصورة (ومش بعرف اتصور🙃)</div>
+                    </div>
+                    <div class="gray-caption-border">(الجودة زبالة بسبب التابلت 🙂)</div>
+                </div>
             </div>
         `;
     } 
@@ -261,12 +274,11 @@ function openModal(folderType) {
     else if (folderType === 'story') {
         content = `
             <h2>بحبك من بعد الله 🌸✨</h2>
-            <div style="line-height: 2; font-size: 1.15rem; color: #4f4f4f; text-align: right; direction: rtl;">
+            <div style="line-height: 2; font-size: 1.15rem; color: #4f4f4f; text-align: justify;">
                 <p>🌸 فاكرة لما قلتلك <strong>"باي يحلوة"</strong>؟ الجملة دي كانت بداية إني أعرف أجمل وأرق واحدة شفتها في حياتي كلها.</p>
-                <p>شايفة العداد اللي تحت ده؟ إن شاء الله لو ربنا كاتب لنا نصيب، هاجي يوم <strong>"3285"</strong> وأطلب إيدك رسمي.. ولحد ما يجي الوقت ده, كل يوم هقعد أدعي من كل قلبي إنك تكوني من نصيبي وتفضلي منورة دنيتي دايماً 🌼</p>
+                <p>شايفة العداد اللي تحت ده؟ إن شاء الله لو ربنا كاتب لنا نصيب، هاجي يوم <strong>"3285"</strong> وأطلب إيدك رسمي.. ولحد ما يجي الوقت ده، كل يوم هقعد أدعي من كل قلبي إنك تكوني من نصيبي وتفضلي منورة دنيتي دايماً 🌼</p>
                 
-                <p>طب فاكرة لما قلتلك باي يوحشة؟ هههههههههههههههههههههههههههههههههههه بحبك موت والله</p>
-                <!-- 📸 تم نقل حاوية الصورة لتصبح أسفل الكلام مباشرة -->
+                <!-- 📸 حاوية الصورة أسفل الكلام مباشرة -->
                 <div class="gallery" style="margin-top: 20px;">
                     <img src="images/moh.png" alt="صورة خاصة">
                 </div>
@@ -360,4 +372,19 @@ function closeModal() {
 window.onclick = function(event) {
     const modal = document.getElementById('folderModal');
     if (event.target == modal) { closeModal(); }
+}
+
+// دالة التبديل الناعم بين الصورتين عند الضغط مع فوت ناعم
+function toggleSpecialImage(container) {
+    const img = container.querySelector('.smooth-toggle-img');
+    const currentSrc = img.getAttribute('src');
+    const altSrc = img.getAttribute('data-alt-src');
+    
+    img.classList.add('fade-out');
+    
+    setTimeout(() => {
+        img.setAttribute('src', altSrc);
+        img.setAttribute('data-alt-src', currentSrc);
+        img.classList.remove('fade-out');
+    }, 250); 
 }
