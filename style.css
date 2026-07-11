@@ -485,7 +485,6 @@ header p {
     padding: 15px;
 }
 
-/* 📥 تأكيد خاصية الـ Scroll وحساب الحجم ليعمل الـ Overflow بشكل كامل ومثالي */
 .modal-content {
     background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%);
     padding: 25px;
@@ -493,8 +492,8 @@ header p {
     border: 2px solid #ffb6c1;
     width: 100%;
     max-width: 480px;
-    max-height: 80vh; /* زيادة مساحة العرض قليلاً لتسهيل التمرير */
-    overflow-y: auto; /* يسمح بالسكرول الرأسي */
+    max-height: 80vh; 
+    overflow-y: auto; 
     overflow-x: hidden;
     position: relative;
     text-align: right;
@@ -677,6 +676,72 @@ footer {
     border-radius: 24px;
     backdrop-filter: blur(5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.special-image-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 2px solid #ffb6c1;
+    box-shadow: 0 6px 15px rgba(255, 182, 193, 0.2);
+}
+
+.special-image-container img {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.gray-caption-border {
+    background-color: rgba(128, 128, 128, 0.12); 
+    color: #4f4f4f;
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-top: 1px solid rgba(128, 128, 128, 0.2); 
+    direction: rtl;
+}
+
+/* الأكواد الخاصة بتأثير التبديل الناعم للصورة والإشارة التوضيحية المتحركة */
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.smooth-toggle-img {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease !important;
+    opacity: 1;
+}
+
+.smooth-toggle-img.fade-out {
+    opacity: 0;
+}
+
+.click-hint {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    pointer-events: none; 
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: hintPulse 2s infinite ease-in-out;
+    direction: rtl;
+}
+
+@keyframes hintPulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.04); opacity: 1; box-shadow: 0 0 10px rgba(255, 182, 193, 0.5); }
 }
 
 @media (max-width: 600px) {
