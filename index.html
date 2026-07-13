@@ -41,7 +41,7 @@
                     <!-- زرار اللوب -->
                     <button id="w-loop-btn" class="control-btn loop-mode-all" onclick="toggleGlobalLoop()" title="وضع التكرار"></button>
                     
-                    <!-- زرار القلب مع التنسيق المضمون لمكان الفقاعة -->
+                    <!-- زرار القلب -->
                     <button id="widget-heart-btn" class="control-btn-heart" onclick="toggleMusicBoxLike(event)" title="إضافة للمفضلة" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:#aeaeae; outline:none; padding:0 5px; vertical-align:middle; position:relative; display:inline-block;">♡</button>
                     
                     <button class="control-btn prev-btn" onclick="playPrevTrack()" title="السابق"></button>
@@ -106,6 +106,17 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div id="modal-body"></div>
         </div>
+    </div>
+
+    <!-- صور البروفايل الثابتة المعزولة في الزوايا السفلية -->
+    <!-- الصورة الأولى (يسار) نشطة وجاهزة للنقر من البداية -->
+    <div id="left-profile-container" class="corner-profile-container left-profile" onclick="playLeftProfileAudio()">
+        <img src="1.png" alt="Profile Left" class="corner-profile-img">
+    </div>
+
+    <!-- الصورة الثانية (يمين) تبدأ مقفلة ومحمية افتراضياً لمنع التداخل والتشغيل العشوائي -->
+    <div id="right-profile-container" class="corner-profile-container right-profile disabled-profile" onclick="playRightProfileAudio()">
+        <img src="2.png" alt="Profile Right" class="corner-profile-img">
     </div>
 
     <script src="script.js"></script>
