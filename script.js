@@ -13,16 +13,23 @@ let myCustomPlaylist = [
     { id: "box-11", title: "ماريدك(امزح🙂)", src: "songs/musicBox/ماريدك.mp3", cover: "maridk.png" },
     { id: "box-12", title: "كل القصايد", src: "songs/musicBox/كل القصايد.mp3", cover: "kl.png" },
     { id: "box-13", title: "لو على قلبي", src: "songs/musicBox/لو على قلبي.mp3", cover: "lwa3.gif" },
-    { id: "box-14", title: "غصن رمان", src: "songs/musicBox/gsnrman.mp3", cover: "gsn.png" }
+    { id: "box-14", title: "gsnrman", src: "songs/musicBox/gsnrman.mp3", cover: "gsn.png" }
 ];
 
 let currentTrackIndex = -1;
 let isLoopingAll = true;   
 let isLoopingOne = false;  
 
-// متغيرات الفويسات والمودال القديمة المنفصلة
+// متغيرات الفويسات والمودال المنفصلة
 let currentAudio = null;
 let currentButton = null;
+
+// متغيرات التحكم بأصوات البروفايل لمنع التداخل
+let leftProfileAudio = null;
+let rightProfileAudio = null;
+
+// شرط الأمان: يمنع الضغط على اليمين (رقم 2) حتى ينتهي صوت اليسار (رقم 1) تماماً
+let isLeftAudioFinished = false; 
 
 let audioPlayer, wPlayBtn, wLoopBtn, wTrackTitle, wTrackArt, progressBar, currentTimeLabel, totalDurationLabel, wHeartBtn;
 
@@ -53,6 +60,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if (counterElement) {
         counterElement.innerText = differenceInDays > 0 ? 
             `بقالنا سوا ${differenceInDays} يوم وإن شاء الله هنبقى مع بعض أكتر و أكتر.` : `بداية حكايتنا الأجمل في الكون.`;
+    }
+
+    // تفعيل البوردر المضيء على صورة اليسار (رقم واحد) تلقائياً عند تحميل الصفحة مباشرة
+    const leftProfile = document.getElementById('left-profile-container');
+    if (leftProfile) {
+        leftProfile.classList.add('active-glow');
     }
 });
 
@@ -117,7 +130,6 @@ function loadTrack(index) {
     });
 }
 
-// تعديل مكان ظهور الفقاعة لتنبثق من فوق زر القلب مباشرة
 function toggleMusicBoxLike(event) {
     event.stopPropagation();
     if (currentTrackIndex === -1) return;
@@ -130,7 +142,6 @@ function toggleMusicBoxLike(event) {
         wHeartBtn.style.color = '#e2264d';
         localStorage.setItem('box_like_' + currentTrack.id, 'true');
 
-        // نضع الفقاعة بداخل زرار القلب نفسه لتنبثق منه عمودياً
         const bubble = document.createElement('div');
         bubble.className = 'bubble-pop';
         bubble.innerText = '💖..,like it';
@@ -265,10 +276,13 @@ function openModal(folderType) {
         content = `
             <h2>بحبك من بعد الله 🌸✨</h2>
             <div style="line-height: 2; font-size: 1.15rem; color: #4f4f4f; text-align: justify;">
-                <p>🌸 فاكرة لما قلتلك <strong>"باي يحلوة"</strong>؟ الجملة دي كانت بداية إني أعرف أجمل وأرق واحدة شفتها في حياتي كلها.</p>
-                <p>شايفة العداد اللي تحت ده؟ إن شاء الله لو ربنا كاتب لنا نصيب، هاجي يوم <strong>"3285"</strong> وأطلب إيدك رسمي.. ولحد ما يجي الوقت ده، كل يوم هقعد أدعي من كل قلبي إنك تكوني من نصيبي وتفضلي منورة دنيتي دايماً 🌼</p>
+                <p>🌸3285🌼</p>
 
-                <p>وحشتينيييييييييييي نفسي احضنك اخنقك :)</p>
+
+                <p>أقرأي و قولي آمين من سكات</p>
+                <p>يارب لو شادية شادي رأفت الأعرج مكتوبة لحد غيري جوزه ملكة جمال العالم واكتبها من نصيبي</p>
+
+                <p>اللهم إن لم تسكنها بيتي فأسكنها فسيح جناتك</p>
                 <div class="gallery" style="margin-top: 20px;">
                     <img src="images/moh.png" alt="صورة خاصة">
                 </div>
@@ -302,14 +316,13 @@ function createNormalAudioHTML(title, src) {
     `;
 }
 
-// تصليح منطق الإيقاف والتشغيل ليعمل بشكل مرن عند الضغط على نفس الزرار مرة أخرى
+// تشغيل الأغاني مع إمكانية التبديل والإيقاف
 function togglePlay(btn, src) {
     if (audioPlayer && !audioPlayer.paused) {
         audioPlayer.pause();
         if (wPlayBtn) wPlayBtn.classList.remove('paused');
     }
 
-    // فحص ذكي للمسار للتأكد من حالة الملف الحالي من غير ما يتأثر باختلاف السيرفرات
     let decodedCurrentSrc = currentAudio ? decodeURI(currentAudio.src) : '';
     let decodedTargetSrc = encodeURI(src);
 
@@ -344,6 +357,77 @@ function togglePlay(btn, src) {
     }).catch(error => {
         console.error(error);
     });
+}
+
+// تشغيل صوت بروفايل اليسار (من يدري.mp3)
+function playLeftProfileAudio() {
+    const leftProfile = document.getElementById('left-profile-container');
+    const rightProfile = document.getElementById('right-profile-container');
+
+    // إيقاف الأغاني العامة لعدم التداخل
+    if (audioPlayer && !audioPlayer.paused) {
+        audioPlayer.pause();
+        if (wPlayBtn) wPlayBtn.classList.remove('paused');
+    }
+
+    // إعادة تصفير حالة الأمان والتحميل من جديد
+    isLeftAudioFinished = false; 
+    rightProfile.classList.add('disabled-profile'); // قفل اليمين بصرياً ومنع النقر عليه
+
+    if (leftProfileAudio) { leftProfileAudio.pause(); leftProfileAudio.currentTime = 0; }
+    if (rightProfileAudio) { rightProfileAudio.pause(); rightProfileAudio.currentTime = 0; }
+
+    // التأكيد على بقاء البوردر المضيء على اليسار فقط أثناء التشغيل
+    leftProfile.classList.add('active-glow');
+    rightProfile.classList.remove('active-glow');
+
+    leftProfileAudio = new Audio('songs/profile/من يدري.mp3');
+    leftProfileAudio.play().catch(err => {
+        console.log("تعذر تشغيل صوت اليسار:", err);
+    });
+
+    // عند انتهاء صوت الشمال: يختفي البوردر منها، ويتم فك قفل اليمين، وينتقل البوردر لليمين فوراً
+    leftProfileAudio.onended = function() {
+        isLeftAudioFinished = true; // فك حظر تفعيل صورة رقم 2
+        leftProfile.classList.remove('active-glow');
+        rightProfile.classList.remove('disabled-profile'); // تفعيل إمكانية النقر مجدداً
+        rightProfile.classList.add('active-glow'); // نقل التأثير البصري المضيء لليمين
+    };
+}
+
+// تشغيل صوت بروفايل اليمين (بحبك.mp3)
+function playRightProfileAudio() {
+    // التحقق الفوري لمنع التشغيل إذا لم ينتهِ صوت اليسار بعد أو لم يعمل من الأساس
+    if (!isLeftAudioFinished) {
+        console.log("الوصول محظور: يجب تشغيل صوت صورة اليسار (1) وانتهاءه بالكامل أولاً!");
+        return; 
+    }
+
+    const leftProfile = document.getElementById('left-profile-container');
+    const rightProfile = document.getElementById('right-profile-container');
+
+    // التأكد من إيقاف المشغلات الأخرى لعدم التداخل
+    if (audioPlayer && !audioPlayer.paused) {
+        audioPlayer.pause();
+        if (wPlayBtn) wPlayBtn.classList.remove('paused');
+    }
+
+    if (leftProfileAudio) { leftProfileAudio.pause(); leftProfileAudio.currentTime = 0; }
+    if (rightProfileAudio) { rightProfileAudio.pause(); rightProfileAudio.currentTime = 0; }
+
+    // البوردر يتركز بالكامل على اليمين أثناء تشغيل الصوت الثاني
+    leftProfile.classList.remove('active-glow');
+    rightProfile.classList.add('active-glow');
+
+    rightProfileAudio = new Audio('songs/profile/بحبك.mp3');
+    rightProfileAudio.play().catch(err => {
+        console.log("تعذر تشغيل صوت اليمين:", err);
+    });
+
+    // عند انتهاء صوت اليمين يختفي البوردر المضيء تماماً بنجاح
+    rightProfileAudio.onended = function() {
+        rightProfile.classList.remove('active-glow');
+    };
 }
 
 function closeModal() {
