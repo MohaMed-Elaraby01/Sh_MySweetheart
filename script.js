@@ -13,7 +13,8 @@ let myCustomPlaylist = [
     { id: "box-11", title: "ماريدك(امزح🙂)", src: "songs/musicBox/ماريدك.mp3", cover: "maridk.png" },
     { id: "box-12", title: "كل القصايد", src: "songs/musicBox/كل القصايد.mp3", cover: "kl.png" },
     { id: "box-13", title: "لو على قلبي", src: "songs/musicBox/لو على قلبي.mp3", cover: "lwa3.gif" },
-    { id: "box-14", title: "gsnrman", src: "songs/musicBox/gsnrman.mp3", cover: "gsn.png" }
+    { id: "box-14", title: "gsnrman", src: "songs/musicBox/gsnrman.mp3", cover: "gsn.png" },
+    { id: "box-15", title: "أنا العاشق لعينيك", src: "songs/musicBox/أنا العاشقك لعينيك.mp3", cover: "ana.png" }
 ];
 
 let currentTrackIndex = -1;
@@ -67,7 +68,55 @@ document.addEventListener("DOMContentLoaded", function() {
     if (leftProfile) {
         leftProfile.classList.add('active-glow');
     }
+
+    // تشغيل نظام القلوب المتطايرة المريح للعين
+    startHeartsGenerator();
 });
+
+// تم تعديل التوقيت ليكون كل 5 ثوانٍ ليعطي فترة هدوء صامتة وثابتة للعين بعد اختفاء القلوب
+function startHeartsGenerator() {
+    setInterval(() => {
+        // توليد مجموعة القلوب لبروفايل اليسار واليمين معاً في نفس الوقت
+        createHeartsCluster('left-profile-container');
+        createHeartsCluster('right-profile-container');
+    }, 5000); 
+}
+
+// دالة تصنع مجموعة من 3 قلوب تظهر وتختفي تماماً قبل بدء الدورة التالية
+function createHeartsCluster(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    let heartsHolder = container.querySelector('.hearts-container');
+    if (!heartsHolder) {
+        heartsHolder = document.createElement('div');
+        heartsHolder.className = 'hearts-container';
+        container.appendChild(heartsHolder);
+    }
+
+    // تطلق 3 قلوب متقاربة زمنياً لتظهر كمجموعة واحدة متناسقة
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+            const heart = document.createElement('span');
+            heart.className = 'heart-particle';
+            heart.innerText = '❤️';
+
+            // توزيع عشوائي مريح ومحدود فوق حافة الصورة
+            const randomLeft = Math.random() * 60 + 20; // تركيز القلوب في المنتصف أكثر لمنع التشتيت
+            const randomXMove = (Math.random() * 30 - 15) + 'px'; 
+
+            heart.style.left = `${randomLeft}%`;
+            heart.style.setProperty('--random-x', randomXMove);
+
+            heartsHolder.appendChild(heart);
+
+            // يتم تدمير عنصر القلب بعد ثانيتين ونصف تماماً لتبقى الشاشة نظيفة وفارغة لثانيتين إضافيتين
+            setTimeout(() => {
+                heart.remove();
+            }, 2500);
+        }, i * 250); // فواصل زمنية قصيرة جداً (ربع ثانية) لتخرج القلوب كمجموعة واحدة متصلة
+    }
+}
 
 function reorderPlaylistByLikes() {
     let likedSongs = [];
@@ -242,6 +291,7 @@ function openModal(folderType) {
             ${createNormalAudioHTML('عيد ميلاد 🎉', 'songs/my-voice/song5.mp3')}
             ${createNormalAudioHTML('لو رحتي بتضلي بقلبي ❤️', 'songs/my-voice/لو رحتي بتضلي بقلبي.mp3')}
             ${createNormalAudioHTML('وبعدين...', 'songs/my-voice/وبعدين.mp3')}
+            ${createNormalAudioHTML('من يدري', 'songs/my-voice/من يدري.mp3')}
         `;
     } 
     else if (folderType === 'her-photos') {
@@ -277,7 +327,6 @@ function openModal(folderType) {
             <h2>بحبك من بعد الله 🌸✨</h2>
             <div style="line-height: 2; font-size: 1.15rem; color: #4f4f4f; text-align: justify;">
                 <p>🌸3285🌼</p>
-
 
                 <p>أقرأي و قولي آمين من سكات</p>
                 <p>يارب لو شادية شادي رأفت الأعرج مكتوبة لحد غيري جوزه ملكة جمال العالم واكتبها من نصيبي</p>
@@ -323,10 +372,10 @@ function togglePlay(btn, src) {
         if (wPlayBtn) wPlayBtn.classList.remove('paused');
     }
 
-    let decodedCurrentSrc = currentAudio ? decodeURI(currentAudio.src) : '';
-    let decodedTargetSrc = encodeURI(src);
+    let decodedCurrentSrc = currentAudio ? decodeURIComponent(currentAudio.src) : '';
+    let decodedTargetSrc = decodeURIComponent(new URL(src, window.location.href).href);
 
-    if (currentAudio && decodedCurrentSrc.endsWith(decodedTargetSrc)) {
+    if (currentAudio && decodedCurrentSrc === decodedTargetSrc) {
         if (!currentAudio.paused) {
             currentAudio.pause();
             btn.innerText = 'تشغيل ⏩';
@@ -359,45 +408,42 @@ function togglePlay(btn, src) {
     });
 }
 
-// تشغيل صوت بروفايل اليسار (من يدري.mp3)
+// تشغيل صوت بروفايل اليسار (كل وعد.mp3)
 function playLeftProfileAudio() {
     const leftProfile = document.getElementById('left-profile-container');
     const rightProfile = document.getElementById('right-profile-container');
 
-    // إيقاف الأغاني العامة لعدم التداخل
     if (audioPlayer && !audioPlayer.paused) {
         audioPlayer.pause();
         if (wPlayBtn) wPlayBtn.classList.remove('paused');
     }
 
-    // إعادة تصفير حالة الأمان والتحميل من جديد
     isLeftAudioFinished = false; 
-    rightProfile.classList.add('disabled-profile'); // قفل اليمين بصرياً ومنع النقر عليه
+    rightProfile.classList.add('disabled-profile'); 
+    rightProfile.classList.remove('hearts-active'); 
 
     if (leftProfileAudio) { leftProfileAudio.pause(); leftProfileAudio.currentTime = 0; }
     if (rightProfileAudio) { rightProfileAudio.pause(); rightProfileAudio.currentTime = 0; }
 
-    // التأكيد على بقاء البوردر المضيء على اليسار فقط أثناء التشغيل
     leftProfile.classList.add('active-glow');
     rightProfile.classList.remove('active-glow');
 
-    leftProfileAudio = new Audio('songs/profile/من يدري.mp3');
+    leftProfileAudio = new Audio('songs/profile/كل وعد.mp3');
     leftProfileAudio.play().catch(err => {
         console.log("تعذر تشغيل صوت اليسار:", err);
     });
 
-    // عند انتهاء صوت الشمال: يختفي البوردر منها، ويتم فك قفل اليمين، وينتقل البوردر لليمين فوراً
     leftProfileAudio.onended = function() {
-        isLeftAudioFinished = true; // فك حظر تفعيل صورة رقم 2
+        isLeftAudioFinished = true; 
         leftProfile.classList.remove('active-glow');
-        rightProfile.classList.remove('disabled-profile'); // تفعيل إمكانية النقر مجدداً
-        rightProfile.classList.add('active-glow'); // نقل التأثير البصري المضيء لليمين
+        rightProfile.classList.remove('disabled-profile'); 
+        rightProfile.classList.add('active-glow'); 
+        rightProfile.classList.add('hearts-active'); 
     };
 }
 
 // تشغيل صوت بروفايل اليمين (بحبك.mp3)
 function playRightProfileAudio() {
-    // التحقق الفوري لمنع التشغيل إذا لم ينتهِ صوت اليسار بعد أو لم يعمل من الأساس
     if (!isLeftAudioFinished) {
         console.log("الوصول محظور: يجب تشغيل صوت صورة اليسار (1) وانتهاءه بالكامل أولاً!");
         return; 
@@ -406,7 +452,6 @@ function playRightProfileAudio() {
     const leftProfile = document.getElementById('left-profile-container');
     const rightProfile = document.getElementById('right-profile-container');
 
-    // التأكد من إيقاف المشغلات الأخرى لعدم التداخل
     if (audioPlayer && !audioPlayer.paused) {
         audioPlayer.pause();
         if (wPlayBtn) wPlayBtn.classList.remove('paused');
@@ -415,7 +460,6 @@ function playRightProfileAudio() {
     if (leftProfileAudio) { leftProfileAudio.pause(); leftProfileAudio.currentTime = 0; }
     if (rightProfileAudio) { rightProfileAudio.pause(); rightProfileAudio.currentTime = 0; }
 
-    // البوردر يتركز بالكامل على اليمين أثناء تشغيل الصوت الثاني
     leftProfile.classList.remove('active-glow');
     rightProfile.classList.add('active-glow');
 
@@ -424,7 +468,6 @@ function playRightProfileAudio() {
         console.log("تعذر تشغيل صوت اليمين:", err);
     });
 
-    // عند انتهاء صوت اليمين يختفي البوردر المضيء تماماً بنجاح
     rightProfileAudio.onended = function() {
         rightProfile.classList.remove('active-glow');
     };
