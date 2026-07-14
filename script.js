@@ -291,7 +291,7 @@ function openModal(folderType) {
             ${createNormalAudioHTML('عيد ميلاد 🎉', 'songs/my-voice/song5.mp3')}
             ${createNormalAudioHTML('لو رحتي بتضلي بقلبي ❤️', 'songs/my-voice/لو رحتي بتضلي بقلبي.mp3')}
             ${createNormalAudioHTML('وبعدين...', 'songs/my-voice/وبعدين.mp3')}
-            ${createNormalAudioHTML('من يدري', 'songs/my-voice/من يدري.mp3')}
+            ${createNormalAudioHTML('يا صبابة قلبي', 'songs/my-voice/من يدري.mp3')}
         `;
     } 
     else if (folderType === 'her-photos') {
