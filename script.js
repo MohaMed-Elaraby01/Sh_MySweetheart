@@ -73,16 +73,13 @@ document.addEventListener("DOMContentLoaded", function() {
     startHeartsGenerator();
 });
 
-// تم تعديل التوقيت ليكون كل 5 ثوانٍ ليعطي فترة هدوء صامتة وثابتة للعين بعد اختفاء القلوب
 function startHeartsGenerator() {
     setInterval(() => {
-        // توليد مجموعة القلوب لبروفايل اليسار واليمين معاً في نفس الوقت
         createHeartsCluster('left-profile-container');
         createHeartsCluster('right-profile-container');
     }, 5000); 
 }
 
-// دالة تصنع مجموعة من 3 قلوب تظهر وتختفي تماماً قبل بدء الدورة التالية
 function createHeartsCluster(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -94,15 +91,13 @@ function createHeartsCluster(containerId) {
         container.appendChild(heartsHolder);
     }
 
-    // تطلق 3 قلوب متقاربة زمنياً لتظهر كمجموعة واحدة متناسقة
     for (let i = 0; i < 3; i++) {
         setTimeout(() => {
             const heart = document.createElement('span');
             heart.className = 'heart-particle';
             heart.innerText = '❤️';
 
-            // توزيع عشوائي مريح ومحدود فوق حافة الصورة
-            const randomLeft = Math.random() * 60 + 20; // تركيز القلوب في المنتصف أكثر لمنع التشتيت
+            const randomLeft = Math.random() * 60 + 20; 
             const randomXMove = (Math.random() * 30 - 15) + 'px'; 
 
             heart.style.left = `${randomLeft}%`;
@@ -110,11 +105,10 @@ function createHeartsCluster(containerId) {
 
             heartsHolder.appendChild(heart);
 
-            // يتم تدمير عنصر القلب بعد ثانيتين ونصف تماماً لتبقى الشاشة نظيفة وفارغة لثانيتين إضافيتين
             setTimeout(() => {
                 heart.remove();
             }, 2500);
-        }, i * 250); // فواصل زمنية قصيرة جداً (ربع ثانية) لتخرج القلوب كمجموعة واحدة متصلة
+        }, i * 250); 
     }
 }
 
@@ -291,12 +285,14 @@ function openModal(folderType) {
             ${createNormalAudioHTML('عيد ميلاد 🎉', 'songs/my-voice/song5.mp3')}
             ${createNormalAudioHTML('لو رحتي بتضلي بقلبي ❤️', 'songs/my-voice/لو رحتي بتضلي بقلبي.mp3')}
             ${createNormalAudioHTML('وبعدين...', 'songs/my-voice/وبعدين.mp3')}
-            ${createNormalAudioHTML('يا صبابة قلبي', 'songs/my-voice/من يدري.mp3')}
+            ${createNormalAudioHTML('من يدري', 'songs/my-voice/من يدري.mp3')}
+            ${createNormalAudioHTML('قلبي معذب', 'songs/my-voice/قلبي معذب.mp3')}
+            ${createNormalAudioHTML('أنا لحبيبي و حبيبي إلي', 'songs/my-voice/أنا لحبيبي و حبيبي إلي.mp3')}
         `;
     } 
     else if (folderType === 'her-photos') {
         content = `
-            <h2>أنا و أنتِ 🤭❤️</h2>
+            <h2>أنا و إنتِ 🤭❤️</h2>
             <div class="gallery">
                 <img src="images/we.png" alt="صورتنا سوا">
                 <img src="images/photo1.jpg" alt="صورة 1"><img src="images/photo2.jpg" alt="صورة 2">
@@ -365,7 +361,6 @@ function createNormalAudioHTML(title, src) {
     `;
 }
 
-// تشغيل الأغاني مع إمكانية التبديل والإيقاف
 function togglePlay(btn, src) {
     if (audioPlayer && !audioPlayer.paused) {
         audioPlayer.pause();
@@ -408,7 +403,6 @@ function togglePlay(btn, src) {
     });
 }
 
-// تشغيل صوت بروفايل اليسار (كل وعد.mp3)
 function playLeftProfileAudio() {
     const leftProfile = document.getElementById('left-profile-container');
     const rightProfile = document.getElementById('right-profile-container');
@@ -442,7 +436,6 @@ function playLeftProfileAudio() {
     };
 }
 
-// تشغيل صوت بروفايل اليمين (بحبك.mp3)
 function playRightProfileAudio() {
     if (!isLeftAudioFinished) {
         console.log("الوصول محظور: يجب تشغيل صوت صورة اليسار (1) وانتهاءه بالكامل أولاً!");
